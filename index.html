@@ -171,6 +171,16 @@
       border-radius: 15px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
+
+    .letter-animation {
+      display: inline-block;
+      opacity: 0;
+      animation: appear 0.3s ease forwards;
+    }
+
+    @keyframes appear {
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -204,9 +214,8 @@
       <button class="story-btn" onclick="acceptConditions('нет')">Нет</button>
     </div>
     <div id="story-container">
-      <p>Ты не будешь меня обижать?</p>
-      <button class="story-btn" onclick="storyAnswer('да')">Да</button>
-      <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
+      <div id="story-questions"></div>
+      <div id="final-message" class="hidden"></div>
     </div>
   </div>
 
@@ -263,17 +272,20 @@
 
     function acceptConditions(answer) {
       if (answer === 'да') {
-        document.body.classList.add('turquoise-bg');
-        conditionContainer.style.display = 'none';
-        storyContainer.style.display = 'block';
-        storyStep = 0;
-        showStoryQuestion();
+        setTimeout(() => {
+          document.body.classList.add('turquoise-bg');
+          conditionContainer.style.display = 'none';
+          storyContainer.style.display = 'block';
+          storyStep = 0;
+          showStoryQuestion();
+        }, 1000);
       } else {
         alert('Для продолжения нужно согласиться с условиями');
       }
     }
 
     const storyQuestions = [
+      "Ты не будешь меня обижать?",
       "Ты будешь моим другом?",
       "Ты будешь меня любить?",
       "Точно точно будешь?"
@@ -281,20 +293,16 @@
 
     function showStoryQuestion() {
       if (storyStep < storyQuestions.length) {
-        storyContainer.innerHTML = `
+        document.getElementById('story-questions').innerHTML = `
           <p>${storyQuestions[storyStep]}</p>
           <button class="story-btn" onclick="storyAnswer('да')">Да</button>
           <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
         `;
         storyStep++;
       } else {
-        storyContainer.innerHTML = `
-          <h2>Хорошо, я верю тебе!</h2>
-          <p>Забери меня к себе ❤️</p>
-        `;
-        setTimeout(() => {
-          storyContainer.style.display = 'none';
-        }, 3000);
+        document.getElementById('story-questions').innerHTML = '';
+        document.getElementById('final-message').innerHTML = '';
+        createFinalMessage();
       }
     }
 
@@ -304,6 +312,20 @@
       } else {
         alert('Может быть в другой раз...');
       }
+    }
+
+    function createFinalMessage() {
+      const message = "Я верю тебе, забери меня из сумки Мурнянки";
+      let currentLetter = 0;
+      const interval = setInterval(() => {
+        if (currentLetter < message.length) {
+          document.getElementById('final-message').innerHTML += 
+            `<span class="letter-animation">${message[currentLetter]}</span>`;
+          currentLetter++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 100);
     }
 
     // Фоновые вопросы
