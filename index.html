@@ -13,6 +13,7 @@
       padding: 0;
       overflow: hidden;
       transition: background-color 0.5s ease;
+      text-align: center;
     }
 
     .background {
@@ -26,25 +27,25 @@
     }
 
     .container {
-      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
       padding: 20px;
       position: relative;
       z-index: 1;
     }
 
     #quiz-container {
-      margin-top: 20px;
-      max-width: 600px;
-      margin: 0 auto;
+      margin-top: 50px;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     #question-box {
-      font-size: 24px;
-      margin-bottom: 20px;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-size: 28px;
+      margin: 30px 0;
     }
 
     .answer-btns {
@@ -55,23 +56,50 @@
     }
 
     .answer-btn {
-      padding: 10px 20px;
+      padding: 15px 30px;
       font-size: 18px;
       border: none;
-      border-radius: 5px;
-      background: #4CAF50;
+      border-radius: 10px;
+      background: #2196F3;
       color: white;
       cursor: pointer;
       transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
     }
 
     .answer-btn:hover {
-      background: #45a049;
+      background: #1976D2;
     }
 
     #result-container {
-      margin-top: 20px;
       display: none;
+      margin-top: 50px;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      animation: result-fade 1s ease;
+    }
+
+    @keyframes result-fade {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gift {
+      padding: 15px;
+      margin: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #fff;
+      border: 2px solid #ddd;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .gift:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     #secret-gift {
@@ -80,49 +108,50 @@
     }
 
     @keyframes glow {
-      from {
-        box-shadow: 0 0 10px gold;
-      }
-      to {
-        box-shadow: 0 0 20px gold, 0 0 30px gold;
-      }
+      from { box-shadow: 0 0 10px gold; }
+      to { box-shadow: 0 0 20px gold, 0 0 30px gold; }
     }
 
-    .gift {
-      padding: 10px 20px;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-
-    .gift:hover {
-      transform: scale(1.05);
+    #secret-container {
+      display: none;
+      margin-top: 50px;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
 
     #story-container {
-      background-color: turquoise;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
       display: none;
+      margin-top: 50px;
+      padding: 30px;
+      background: #e8f5e9;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
 
     .story-btn {
-      padding: 10px 20px;
+      padding: 12px 24px;
       margin: 10px;
       border: none;
       border-radius: 5px;
       background: #4CAF50;
       color: white;
       cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .story-btn:hover {
+      background: #45a049;
     }
 
     .floating-question {
       position: absolute;
+      font-size: 18px;
       animation: float 5s infinite ease-in-out;
       opacity: 0.7;
       transition: all 0.5s;
+      color: #333;
     }
 
     @keyframes float {
@@ -133,6 +162,14 @@
 
     .turquoise-bg {
       background-color: turquoise !important;
+    }
+
+    .condition-question {
+      margin-top: 50px;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -148,22 +185,28 @@
       </div>
     </div>
     <div id="result-container">
-      <h2>🎉 Результаты 🎉</h2>
+      <h2>🎉 Вы готовы вступить в клуб 30-летних! 🎉</h2>
       <div id="gifts">
         <div class="gift">Подарок 1: Сертификат в спа-салон</div>
         <div class="gift">Подарок 2: Набор косметики</div>
         <div id="secret-gift" class="gift">🎁 СЕКРЕТНЫЙ ПОДАРОК 🎁</div>
       </div>
     </div>
-    <div id="secret-container" style="display: none;">
+    <div id="secret-container">
       <h2>🎁 Вы выиграли купон на скидку 15% в магазин Дикси!</h2>
       <button onclick="keepGift()">Оставить подарок</button>
-      <button onclick="changeGift()">Заменить на нечто необыкновенное</button>
+      <button onclick="showConditions()">Заменить на нечто необыкновенное</button>
     </div>
-    <div id="story-container" style="display: none;">
+    <div id="condition-container" style="display: none;">
+      <h3>Вы обязаны принять условия:</h3>
+      <p>Принимаете ли вы условия участия в клубе 30-летних?</p>
+      <button class="story-btn" onclick="acceptConditions('да')">Да</button>
+      <button class="story-btn" onclick="acceptConditions('нет')">Нет</button>
+    </div>
+    <div id="story-container">
       <p>Ты не будешь меня обижать?</p>
-      <button class="story-btn" onclick="storyAnswer('yes')">Да</button>
-      <button class="story-btn" onclick="storyAnswer('no')">Нет</button>
+      <button class="story-btn" onclick="storyAnswer('да')">Да</button>
+      <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
     </div>
   </div>
 
@@ -183,11 +226,13 @@
 
     let currentQuestion = 0;
     let answers = [];
+    let storyStep = 0;
 
     const questionBox = document.getElementById('question-box');
     const quizContainer = document.getElementById('quiz-container');
     const resultContainer = document.getElementById('result-container');
     const secretContainer = document.getElementById('secret-container');
+    const conditionContainer = document.getElementById('condition-container');
     const storyContainer = document.getElementById('story-container');
 
     function answer(response) {
@@ -198,52 +243,67 @@
       } else {
         quizContainer.style.display = 'none';
         resultContainer.style.display = 'block';
-        document.getElementById('secret-gift').addEventListener('click', () => {
-          resultContainer.style.display = 'none';
-          secretContainer.style.display = 'block';
-        });
       }
     }
+
+    document.getElementById('secret-gift').addEventListener('click', () => {
+      resultContainer.style.display = 'none';
+      secretContainer.style.display = 'block';
+    });
 
     function keepGift() {
       secretContainer.style.display = 'none';
       alert('Вы сохранили свой подарок!');
     }
 
-    function changeGift() {
-      document.body.classList.add('turquoise-bg');
+    function showConditions() {
       secretContainer.style.display = 'none';
-      storyContainer.style.display = 'block';
+      conditionContainer.style.display = 'block';
+    }
+
+    function acceptConditions(answer) {
+      if (answer === 'да') {
+        document.body.classList.add('turquoise-bg');
+        conditionContainer.style.display = 'none';
+        storyContainer.style.display = 'block';
+        storyStep = 0;
+        showStoryQuestion();
+      } else {
+        alert('Для продолжения нужно согласиться с условиями');
+      }
+    }
+
+    const storyQuestions = [
+      "Ты будешь моим другом?",
+      "Ты будешь меня любить?",
+      "Точно точно будешь?"
+    ];
+
+    function showStoryQuestion() {
+      if (storyStep < storyQuestions.length) {
+        storyContainer.innerHTML = `
+          <p>${storyQuestions[storyStep]}</p>
+          <button class="story-btn" onclick="storyAnswer('да')">Да</button>
+          <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
+        `;
+        storyStep++;
+      } else {
+        storyContainer.innerHTML = `
+          <h2>Хорошо, я верю тебе!</h2>
+          <p>Забери меня к себе ❤️</p>
+        `;
+        setTimeout(() => {
+          storyContainer.style.display = 'none';
+        }, 3000);
+      }
     }
 
     function storyAnswer(answer) {
-      const storyQuestions = [
-        "Ты будешь моим другом?",
-        "Ты будешь меня любить?",
-        "Точно точно будешь?"
-      ];
-      let currentStoryQuestion = 0;
-
-      function askStoryQuestion() {
-        if (currentStoryQuestion < storyQuestions.length) {
-          storyContainer.innerHTML = `
-            <p>${storyQuestions[currentStoryQuestion]}</p>
-            <button class="story-btn" onclick="storyAnswer('да')">Да</button>
-            <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
-          `;
-          currentStoryQuestion++;
-        } else {
-          storyContainer.innerHTML = `
-            <h2>Хорошо, я верю тебе!</h2>
-            <p>Забери меня к себе ❤️</p>
-          `;
-          setTimeout(() => {
-            storyContainer.style.display = 'none';
-          }, 3000);
-        }
+      if (answer === 'да') {
+        showStoryQuestion();
+      } else {
+        alert('Может быть в другой раз...');
       }
-
-      askStoryQuestion();
     }
 
     // Фоновые вопросы
@@ -263,7 +323,8 @@
       }, 5000);
     }
 
-    setInterval(createFloatingQuestion, 1000);
+    // Увеличенное количество вопросов
+    setInterval(createFloatingQuestion, 500); // Теперь каждые 0.5 сек
   </script>
 </body>
 </html>
