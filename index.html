@@ -2,158 +2,39 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Праздничный опрос 30-летних</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fdfdfd;
-      overflow-x: hidden;
-      transition: background 0.5s;
-    }
-    header {
-      background: linear-gradient(45deg, #ff9800, #ff5722);
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      font-size: 2.5em;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    section {
-      max-width: 800px;
-      margin: 30px auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      text-align: center;
-      position: relative;
-      z-index: 2;
-    }
-    .hidden { display: none; }
-    .btn {
-      display: inline-block;
-      padding: 12px 25px;
-      margin: 10px 5px;
-      font-size: 1.1em;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: transform 0.3s;
-      background: #2196f3;
-      color: #fff;
-    }
-    .btn:hover { transform: scale(1.05); }
-    .btn.active { background: #4caf50 !important; color: #fff; }
-    .turquoise-bg { background: #e0f7fa !important; color: #006064; }
-    #animated-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-    .floating-question {
-      position: absolute;
-      font-size: 1em;
-      opacity: 0.3;
-      color: #006064;
-      white-space: nowrap;
-    }
-  </style>
+  <title>Опросник к 30-летию</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body id="body">
-  <header>Праздничный опрос 30-летних!</header>
-  <section id="quiz-section">
-    <h2>Готов ли ты стать 30-летним?</h2>
-    <div id="quiz-container"></div>
-  </section>
-  <section id="extra-section" class="hidden">
-    <div id="animated-bg"></div>
-    <div id="conditions-container">
-      <h2>Прими условия:</h2>
-      <div class="condition-block">
-        <p>Ты не будешь меня обижать?</p>
-        <button class="btn answer-btn">Да</button>
-        <button class="btn answer-btn">Нет</button>
-      </div>
-      <div class="condition-block">
-        <p>Ты будешь моим другом?</p>
-        <button class="btn answer-btn">Да</button>
-        <button class="btn answer-btn">Нет</button>
-      </div>
-      <div class="condition-block">
-        <p>Ты будешь меня любить?</p>
-        <button class="btn answer-btn">Да</button>
-        <button class="btn answer-btn">Нет</button>
-      </div>
-      <div class="condition-block">
-        <p>Точно точно будешь?</p>
-        <button id="final-extra-btn" class="btn">Ответить</button>
+<body>
+  <div class="background"></div>
+  <div class="container">
+    <h1>🎉 Праздничный опросник к 30-летию 🎉</h1>
+    <div id="quiz-container">
+      <div id="question-box"></div>
+      <button id="next-btn">Следующий вопрос</button>
+    </div>
+    <div id="result-container" class="hidden">
+      <h2>🎉 Результаты 🎉</h2>
+      <p id="result-text"></p>
+      <div id="gifts">
+        <div class="gift">Подарок 1: Сертификат в спа-салон</div>
+        <div class="gift">Подарок 2: Набор косметики</div>
+        <div id="secret-gift" class="gift">🎁 СЕКРЕТНЫЙ ПОДАРОК 🎁</div>
       </div>
     </div>
-  </section>
-  <script>
-    const quizQuestions = [
-      "Готов(а) ли ты к 30-летию?",
-      "Чувствуешь ли ты себя взрослым(ой)?",
-      "Любишь ли ты праздники?",
-      "Часто ли ты вспоминаешь детство?",
-      "Стало ли тебе сложнее ложиться поздно?",
-      "Ты научился(ась) копить деньги?",
-      "Ты умеешь готовить любимые блюда?",
-      "Ты стал(а) мудрее за последние 10 лет?",
-      "Остались ли у тебя мечты?",
-      "Ты доволен(а) своей жизнью?"
-    ];
-    
-    const quizContainer = document.getElementById("quiz-container");
-    quizQuestions.forEach((question, index) => {
-      const questionBlock = document.createElement("div");
-      questionBlock.innerHTML = `<p>${question}</p>
-        <button class="btn" onclick="nextQuestion(${index})">Да</button>
-        <button class="btn" onclick="nextQuestion(${index})">Нет</button>`;
-      quizContainer.appendChild(questionBlock);
-    });
-    
-    function nextQuestion(index) {
-      const allQuestions = document.querySelectorAll("#quiz-container div");
-      allQuestions[index].style.display = "none";
-      if (index + 1 < allQuestions.length) {
-        allQuestions[index + 1].style.display = "block";
-      } else {
-        document.getElementById("quiz-section").classList.add("hidden");
-        document.getElementById("extra-section").classList.remove("hidden");
-        document.body.classList.add("turquoise-bg");
-        generateFloatingQuestions();
-      }
-    }
-    
-    function generateFloatingQuestions() {
-      const bg = document.getElementById('animated-bg');
-      const texts = [
-        "Что если?", "Почему?", "Как быть?", "А вдруг...", "Ты уверен?", 
-        "Интересно?", "Невероятно!", "Вопрос?", "Подумаем...", "Время перемен"
-      ];
-      bg.innerHTML = "";
-      for (let i = 0; i < 30; i++) {
-        const span = document.createElement('span');
-        span.classList.add('floating-question');
-        span.textContent = texts[Math.floor(Math.random() * texts.length)];
-        span.style.fontSize = (Math.random() * 1.5 + 0.8) + "em";
-        span.style.left = Math.random() * 100 + "%";
-        span.style.top = Math.random() * 100 + "%";
-        bg.appendChild(span);
-      }
-    }
-    
-    document.getElementById('final-extra-btn').addEventListener('click', () => {
-      alert('Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️');
-    });
-  </script>
+    <div id="secret-container" class="hidden">
+      <h2>🎁 Вы выиграли купон на скидку 15% в магазин Дикси!</h2>
+      <button id="keep-gift">Оставить подарок</button>
+      <button id="change-gift">Заменить на что-то необыкновенное</button>
+    </div>
+    <div id="story-container" class="hidden">
+      <h2>Бирюзовая история</h2>
+      <p>Ты не будешь меня обижать?</p>
+      <button class="story-btn" data-answer="yes">Да</button>
+      <button class="story-btn" data-answer="no">Нет</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
