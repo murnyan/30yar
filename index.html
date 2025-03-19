@@ -1,352 +1,42 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>30-летний опросник</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      transition: background-color 0.5s ease;
-      text-align: center;
+<script>
+  // ... (предыдущий код)
+
+  function showStoryQuestion() {
+    if (storyStep < storyQuestions.length) {
+      document.getElementById('story-questions').innerHTML = `
+        <p>${storyQuestions[storyStep]}</p>
+        <button class="story-btn" onclick="storyAnswer('да')">Да</button>
+        <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
+      `;
+      storyStep++;
+    } else {
+      document.getElementById('story-questions').innerHTML = '';
+      createFinalMessage();
     }
+  }
 
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
-    }
+  function storyAnswer(answer) {
+    // Убираем проверку ответа, сразу переходим к следующему вопросу
+    showStoryQuestion();
+  }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    #quiz-container {
-      margin-top: 50px;
-      padding: 20px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    #question-box {
-      font-size: 28px;
-      margin: 30px 0;
-    }
-
-    .answer-btns {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
-
-    .answer-btn {
-      padding: 15px 30px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      background: #2196F3;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
-    }
-
-    .answer-btn:hover {
-      background: #1976D2;
-    }
-
-    #result-container {
-      display: none;
-      margin-top: 50px;
-      padding: 30px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      animation: result-fade 1s ease;
-    }
-
-    @keyframes result-fade {
-      from { opacity: 0; transform: translateY(-50px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .gift {
-      padding: 15px;
-      margin: 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-      background: #fff;
-      border: 2px solid #ddd;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .gift:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    #secret-gift {
-      border: 2px solid gold;
-      animation: glow 1.5s infinite alternate;
-    }
-
-    @keyframes glow {
-      from { box-shadow: 0 0 10px gold; }
-      to { box-shadow: 0 0 20px gold, 0 0 30px gold; }
-    }
-
-    #secret-container {
-      display: none;
-      margin-top: 50px;
-      padding: 30px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-
-    #story-container {
-      display: none;
-      margin-top: 50px;
-      padding: 30px;
-      background: #e8f5e9;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-
-    .story-btn {
-      padding: 12px 24px;
-      margin: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #4CAF50;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .story-btn:hover {
-      background: #45a049;
-    }
-
-    .floating-question {
-      position: absolute;
-      font-size: 18px;
-      animation: float 5s infinite ease-in-out;
-      opacity: 0.7;
-      transition: all 0.5s;
-      color: #333;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(-20px); }
-      50% { transform: translateY(20px); }
-      100% { transform: translateY(-20px); }
-    }
-
-    .turquoise-bg {
-      background-color: turquoise !important;
-    }
-
-    .condition-question {
-      margin-top: 50px;
-      padding: 20px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-
-    .letter-animation {
-      display: inline-block;
-      opacity: 0;
-      animation: appear 0.3s ease forwards;
-    }
-
-    @keyframes appear {
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-</head>
-<body>
-  <div class="background"></div>
-  <div class="container">
-    <h1>🎉 Праздничный опросник к 30-летию 🎉</h1>
-    <div id="quiz-container">
-      <div id="question-box"></div>
-      <div class="answer-btns">
-        <button class="answer-btn" onclick="answer('да')">Да</button>
-        <button class="answer-btn" onclick="answer('нет')">Нет</button>
-      </div>
-    </div>
-    <div id="result-container">
-      <h2>🎉 Вы готовы вступить в клуб 30-летних! 🎉</h2>
-      <div id="gifts">
-        <div class="gift">Подарок 1: Сертификат в спа-салон</div>
-        <div class="gift">Подарок 2: Набор косметики</div>
-        <div id="secret-gift" class="gift">🎁 СЕКРЕТНЫЙ ПОДАРОК 🎁</div>
-      </div>
-    </div>
-    <div id="secret-container">
-      <h2>🎁 Вы выиграли купон на скидку 15% в магазин Дикси!</h2>
-      <button onclick="keepGift()">Оставить подарок</button>
-      <button onclick="showConditions()">Заменить на нечто необыкновенное</button>
-    </div>
-    <div id="condition-container" style="display: none;">
-      <h3>Вы обязаны принять условия:</h3>
-      <p>Принимаете ли вы условия участия в клубе 30-летних?</p>
-      <button class="story-btn" onclick="acceptConditions('да')">Да</button>
-      <button class="story-btn" onclick="acceptConditions('нет')">Нет</button>
-    </div>
-    <div id="story-container">
-      <div id="story-questions"></div>
-      <div id="final-message" class="hidden"></div>
-    </div>
-  </div>
-
-  <script>
-    const questions = [
-      "Ты готов к новым приключениям?",
-      "Любишь ли ты путешествовать?",
-      "Часто ли ты ходишь в рестораны?",
-      "Мечтаешь ли ты о собственном бизнесе?",
-      "Считаешь ли себя оптимистом?",
-      "Любишь ли ты сюрпризы?",
-      "Был ли у тебя когда-нибудь питомец?",
-      "Планируешь ли ты большой проект в этом году?",
-      "Важно ли тебе оставаться молодым духом?",
-      "Готов ли ты к неожиданностям?"
-    ];
-
-    let currentQuestion = 0;
-    let answers = [];
-    let storyStep = 0;
-
-    const questionBox = document.getElementById('question-box');
-    const quizContainer = document.getElementById('quiz-container');
-    const resultContainer = document.getElementById('result-container');
-    const secretContainer = document.getElementById('secret-container');
-    const conditionContainer = document.getElementById('condition-container');
-    const storyContainer = document.getElementById('story-container');
-
-    function answer(response) {
-      answers.push(response);
-      currentQuestion++;
-      if (currentQuestion < questions.length) {
-        questionBox.textContent = questions[currentQuestion];
+  function createFinalMessage() {
+    const message = "Я верю тебе, забери меня из сумки Мурнянки";
+    const finalMessageDiv = document.getElementById('final-message');
+    finalMessageDiv.classList.remove('hidden');
+    
+    // Анимация появления текста
+    let currentLetter = 0;
+    const interval = setInterval(() => {
+      if (currentLetter < message.length) {
+        finalMessageDiv.innerHTML += 
+          `<span class="letter-animation">${message[currentLetter]}</span>`;
+        currentLetter++;
       } else {
-        quizContainer.style.display = 'none';
-        resultContainer.style.display = 'block';
+        clearInterval(interval);
       }
-    }
+    }, 100);
+  }
 
-    document.getElementById('secret-gift').addEventListener('click', () => {
-      resultContainer.style.display = 'none';
-      secretContainer.style.display = 'block';
-    });
-
-    function keepGift() {
-      secretContainer.style.display = 'none';
-      alert('Вы сохранили свой подарок!');
-    }
-
-    function showConditions() {
-      secretContainer.style.display = 'none';
-      conditionContainer.style.display = 'block';
-    }
-
-    function acceptConditions(answer) {
-      if (answer === 'да') {
-        setTimeout(() => {
-          document.body.classList.add('turquoise-bg');
-          conditionContainer.style.display = 'none';
-          storyContainer.style.display = 'block';
-          storyStep = 0;
-          showStoryQuestion();
-        }, 1000);
-      } else {
-        alert('Для продолжения нужно согласиться с условиями');
-      }
-    }
-
-    const storyQuestions = [
-      "Ты не будешь меня обижать?",
-      "Ты будешь моим другом?",
-      "Ты будешь меня любить?",
-      "Точно точно будешь?"
-    ];
-
-    function showStoryQuestion() {
-      if (storyStep < storyQuestions.length) {
-        document.getElementById('story-questions').innerHTML = `
-          <p>${storyQuestions[storyStep]}</p>
-          <button class="story-btn" onclick="storyAnswer('да')">Да</button>
-          <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
-        `;
-        storyStep++;
-      } else {
-        document.getElementById('story-questions').innerHTML = '';
-        document.getElementById('final-message').innerHTML = '';
-        createFinalMessage();
-      }
-    }
-
-    function storyAnswer(answer) {
-      if (answer === 'да') {
-        showStoryQuestion();
-      } else {
-        alert('Может быть в другой раз...');
-      }
-    }
-
-    function createFinalMessage() {
-      const message = "Я верю тебе, забери меня из сумки Мурнянки";
-      let currentLetter = 0;
-      const interval = setInterval(() => {
-        if (currentLetter < message.length) {
-          document.getElementById('final-message').innerHTML += 
-            `<span class="letter-animation">${message[currentLetter]}</span>`;
-          currentLetter++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 100);
-    }
-
-    // Фоновые вопросы
-    function createFloatingQuestion() {
-      const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-      const question = document.createElement('div');
-      question.className = 'floating-question';
-      question.textContent = randomQuestion;
-      question.style.left = Math.random() * 100 + '%';
-      question.style.top = Math.random() * 100 + '%';
-      question.style.fontSize = Math.random() * 15 + 12 + 'px';
-      question.style.transform = `rotate(${Math.random() * 360}deg)`;
-      question.style.color = `hsl(${Math.random() * 360}, 70%, 50%)`;
-      document.querySelector('.background').appendChild(question);
-      setTimeout(() => {
-        question.remove();
-      }, 5000);
-    }
-
-    // Увеличенное количество вопросов
-    setInterval(createFloatingQuestion, 500); // Теперь каждые 0.5 сек
-  </script>
-</body>
-</html>
+  // ... (оставшийся код)
+</script>
