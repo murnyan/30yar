@@ -1,49 +1,217 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Опросник для 30-летних</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>Опросник для 30-летних</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Основные стили -->
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f0f0;
+      color: #333;
+      transition: background 0.5s, color 0.5s;
+    }
+    header {
+      background: #ff6f61;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 2em;
+      animation: fadeInDown 1s;
+    }
+    section {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      animation: fadeIn 1s;
+    }
+    .hidden {
+      display: none;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    /* Кнопка старта опроса */
+    #start-btn {
+      background: #ff6f61;
+      color: #fff;
+    }
+    /* Кнопки ответа */
+    .answer-btn {
+      background: #4caf50;
+      color: #fff;
+    }
+    /* Секретный подарок в "горящей рамочке" */
+    .secret-gift {
+      border: 3px solid #e91e63;
+      box-shadow: 0 0 15px #e91e63;
+      padding: 10px;
+      margin: 10px 0;
+      animation: pulse 2s infinite;
+    }
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px #e91e63; }
+      50% { box-shadow: 0 0 25px #e91e63; }
+      100% { box-shadow: 0 0 10px #e91e63; }
+    }
+    /* Бирюзовый стиль для необыкновенной замены */
+    .turquoise-theme {
+      background: #e0f7fa;
+      color: #006064;
+    }
+    .turquoise-theme header {
+      background: #00acc1;
+    }
+    .turquoise-theme .btn {
+      background: #00acc1;
+      color: #fff;
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Опросник для 30-летних</h1>
-        <p class="subtitle">Готова ли ты к своему 30-летию? Пройди тест и узнай!</p>
-        <div id="questions"></div>
-        <button id="next-btn" class="hidden">Далее</button>
+<body id="body">
+  <header id="header">Опросник 30-летних</header>
+  <section id="intro-section">
+    <p>Ты готов(а) стать 30-летним? Пройди опрос из 20 вопросов и узнай, что тебя ждет!</p>
+    <button id="start-btn" class="btn">Начать опрос</button>
+  </section>
+  
+  <!-- Опросник -->
+  <section id="quiz-section" class="hidden">
+    <div id="question-container">
+      <p id="question-text"></p>
+      <div id="answers">
+        <button class="btn answer-btn" data-answer="yes">Да</button>
+        <button class="btn answer-btn" data-answer="no">Нет</button>
+      </div>
     </div>
-
-    <div id="result" class="hidden">
-        <h2>Ваш результат</h2>
-        <p id="result-text"></p>
-        <h3>Выберите подарок:</h3>
-        <div class="gifts">
-            <div class="gift">Книга о 30-летии</div>
-            <div class="gift">Подарочный сертификат</div>
-            <div class="gift secret-gift">Секретный подарок</div>
-        </div>
+  </section>
+  
+  <!-- Результаты опроса и выбор подарков -->
+  <section id="result-section" class="hidden">
+    <h2>Поздравляем, ты успешно прошёл опрос!</h2>
+    <p>Выбери свой подарок:</p>
+    <div id="gifts">
+      <button class="btn" id="gift1">Подарок 1</button>
+      <button class="btn" id="gift2">Подарок 2</button>
+      <button class="btn secret-gift" id="secret-gift">СЕКРЕТНЫЙ подарок</button>
     </div>
-
-    <div id="secret-gift-modal" class="modal hidden">
-        <h2>Поздравляем!</h2>
-        <p>Вы выиграли купон на скидку в "Дикси" на 15%!</p>
-        <button id="keep-gift">Оставить подарок</button>
-        <button id="replace-gift">Заменить на нечто необыкновенное</button>
+    <div id="secret-result" class="hidden">
+      <p>Вы выиграли купон на скидку в магазин Дикси на 15%!</p>
+      <div>
+        <button class="btn" id="keep-gift">Оставить подарок</button>
+        <button class="btn" id="replace-gift">Заменить на нечто необыкновенное</button>
+      </div>
     </div>
-
-    <div id="conditions" class="modal hidden">
-        <h2>Принять условия</h2>
-        <p id="condition-text"></p>
-        <button class="condition-btn" data-answer="yes">Да</button>
-        <button class="condition-btn" data-answer="no">Нет</button>
+  </section>
+  
+  <!-- Блок с условиями для необыкновенного подарка -->
+  <section id="extra-section" class="hidden">
+    <h2>Прими условия:</h2>
+    <div id="extra-questions">
+      <p>Ты не будешь меня обижать?</p>
+      <button class="btn" data-extra="yes">Да</button>
+      <button class="btn" data-extra="no">Нет</button>
+      <p>Ты будешь моим другом?</p>
+      <button class="btn" data-extra="yes">Да</button>
+      <button class="btn" data-extra="no">Нет</button>
+      <p>Ты будешь меня любить?</p>
+      <button class="btn" data-extra="yes">Да</button>
+      <button class="btn" data-extra="no">Нет</button>
+      <p>Точно точно будешь?</p>
+      <button class="btn" id="final-extra-btn">Ответить</button>
     </div>
-
-    <div id="story" class="modal hidden">
-        <h2>История</h2>
-        <p>Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️</p>
+    <div id="final-message" class="hidden">
+      <h2>Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️</h2>
     </div>
-
-    <script src="script.js"></script>
+  </section>
+  
+  <!-- Скрипты -->
+  <script>
+    // Логика опросника
+    const startBtn = document.getElementById('start-btn');
+    const introSection = document.getElementById('intro-section');
+    const quizSection = document.getElementById('quiz-section');
+    const questionText = document.getElementById('question-text');
+    const answerButtons = document.querySelectorAll('.answer-btn');
+    
+    // 20 вопросов. Здесь можно варьировать вопросы.
+    const questions = Array(20).fill('Готов ли ты стать 30-летним?');
+    let currentQuestion = 0;
+    
+    startBtn.addEventListener('click', () => {
+      introSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      showQuestion();
+    });
+    
+    function showQuestion() {
+      if (currentQuestion < questions.length) {
+        questionText.textContent = `Вопрос ${currentQuestion + 1}: ${questions[currentQuestion]}`;
+      } else {
+        // Завершили опрос, показать результаты
+        quizSection.classList.add('hidden');
+        document.getElementById('result-section').classList.remove('hidden');
+      }
+    }
+    
+    answerButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Можно добавить обработку ответа, если нужно
+        currentQuestion++;
+        showQuestion();
+      });
+    });
+    
+    // Логика подарков
+    const secretGiftBtn = document.getElementById('secret-gift');
+    const secretResult = document.getElementById('secret-result');
+    secretGiftBtn.addEventListener('click', () => {
+      secretResult.classList.remove('hidden');
+    });
+    
+    // Кнопки выбора подарка
+    document.getElementById('keep-gift').addEventListener('click', () => {
+      alert('Подарок сохранён! Наслаждайся своим купоном.');
+    });
+    
+    document.getElementById('replace-gift').addEventListener('click', () => {
+      // Меняем стиль сайта на бирюзовый
+      document.getElementById('body').classList.add('turquoise-theme');
+      // Переходим к блоку с дополнительными условиями
+      document.getElementById('result-section').classList.add('hidden');
+      document.getElementById('extra-section').classList.remove('hidden');
+    });
+    
+    // Логика дополнительного блока (условия)
+    document.getElementById('final-extra-btn').addEventListener('click', () => {
+      // Независимо от ответов, показываем финальное сообщение
+      document.getElementById('extra-questions').classList.add('hidden');
+      document.getElementById('final-message').classList.remove('hidden');
+    });
+  </script>
 </body>
 </html>
