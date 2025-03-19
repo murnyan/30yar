@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Праздничный опрос 30-летних</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Стили -->
   <style>
     /* Общие стили */
     body {
@@ -12,6 +11,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #fdfdfd;
       overflow-x: hidden;
+      transition: background 0.5s;
     }
     header {
       background: linear-gradient(45deg, #ff9800, #ff5722);
@@ -29,6 +29,8 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       text-align: center;
+      position: relative;
+      z-index: 2;
     }
     .hidden {
       display: none;
@@ -46,192 +48,154 @@
     .btn:hover {
       transform: scale(1.05);
     }
-    /* Стиль для интерактивных кнопок */
     .btn.active {
       background: #4caf50 !important;
       color: #fff;
     }
-    .btn.answer-btn {
+    .answer-btn {
       background: #2196f3;
       color: #fff;
     }
-    .btn.answer-btn:hover {
+    .answer-btn:hover {
       opacity: 0.8;
     }
-    /* Праздничный стартовый экран */
-    #intro-section {
-      background: #fff3e0;
-      border: 3px dashed #ff9800;
-      padding: 40px;
-      border-radius: 15px;
+    /* Стили для экрана с условиями */
+    #extra-section {
+      position: relative;
+      overflow: hidden;
+      padding-top: 60px;
+      padding-bottom: 60px;
     }
-    /* Фон для вопросов (новый, без изображений) */
-    .custom-bg {
-      background: #dcedc8;
-      color: #33691e;
+    /* Бирюзовый фон для экрана с условиями */
+    .turquoise-bg {
+      background: #e0f7fa !important;
+      color: #006064;
+    }
+    /* Центрирование контента условий */
+    #conditions-container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    #conditions-container p {
+      font-size: 1.2em;
+      margin: 20px 0 10px;
+    }
+    /* Анимированный задний фон с плавающими вопросами */
+    #animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .floating-question {
+      position: absolute;
+      font-size: 1em;
+      opacity: 0.3;
+      color: #006064;
+      white-space: nowrap;
+      animation: floatUp 8s linear infinite;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); opacity: 0; }
+      20% { opacity: 0.3; }
+      80% { opacity: 0.3; }
+      100% { transform: translateY(-10vh); opacity: 0; }
     }
   </style>
 </head>
 <body id="body">
   <header>Праздничный опрос 30-летних!</header>
   
-  <!-- Стартовый экран -->
+  <!-- Стартовый экран (пример предыдущей логики) -->
   <section id="intro-section">
     <p>Добро пожаловать! Ты готов(а) отметить свои 30? Пройди интерактивный опрос и получи особенный подарок!</p>
     <button id="start-btn" class="btn" style="background:#ff5722; color:#fff;">Начать опрос</button>
   </section>
   
-  <!-- Блок вопросов с новым фоном -->
-  <section id="quiz-section" class="hidden custom-bg">
-    <div id="question-container">
-      <p id="question-text" style="font-size:1.3em;"></p>
-      <div id="answers"></div>
-    </div>
-  </section>
+  <!-- Остальные блоки опроса (в данном примере не показаны) -->
+  <!-- ... блоки опроса и подарков ... -->
   
-  <!-- Блок результатов и подарков -->
-  <section id="result-section" class="hidden">
-    <h2>Поздравляем, ты успешно прошёл опрос!</h2>
-    <p>Выбери свой подарок:</p>
-    <div id="gifts">
-      <button class="btn" id="gift1" style="background:#4caf50; color:#fff;">Подарок 1</button>
-      <button class="btn" id="gift2" style="background:#2196f3; color:#fff;">Подарок 2</button>
-      <button class="btn" id="secret-gift" style="background:#e91e63; color:#fff; border: 3px solid #e91e63; box-shadow: 0 0 15px #e91e63;">СЕКРЕТНЫЙ подарок</button>
-    </div>
-    <div id="secret-result" class="hidden">
-      <p>Вы выиграли купон на скидку в магазин Дикси на 15%!</p>
-      <div>
-        <button class="btn" id="keep-gift" style="background:#4caf50; color:#fff;">Оставить подарок</button>
-        <button class="btn" id="replace-gift" style="background:#2196f3; color:#fff;">Заменить на нечто необыкновенное</button>
+  <!-- Блок дополнительных условий -->
+  <section id="extra-section" class="hidden">
+    <!-- Анимированный фон с плавающими вопросами -->
+    <div id="animated-bg"></div>
+    
+    <!-- Контейнер с условиями -->
+    <div id="conditions-container">
+      <h2>Прими условия:</h2>
+      <div class="condition-block">
+        <p>Ты не будешь меня обижать?</p>
+        <button class="btn answer-btn" data-extra="obizh">Да</button>
+        <button class="btn answer-btn" data-extra="obizh">Нет</button>
+      </div>
+      <div class="condition-block">
+        <p>Ты будешь моим другом?</p>
+        <button class="btn answer-btn" data-extra="friend">Да</button>
+        <button class="btn answer-btn" data-extra="friend">Нет</button>
+      </div>
+      <div class="condition-block">
+        <p>Ты будешь меня любить?</p>
+        <button class="btn answer-btn" data-extra="love">Да</button>
+        <button class="btn answer-btn" data-extra="love">Нет</button>
+      </div>
+      <div class="condition-block">
+        <p>Точно точно будешь?</p>
+        <button id="final-extra-btn" class="btn" style="background:#009688; color:#fff;">Ответить</button>
       </div>
     </div>
   </section>
   
-  <!-- Дополнительный блок с условиями -->
-  <section id="extra-section" class="hidden">
-    <h2>Прими условия:</h2>
-    <div id="extra-questions">
-      <p>Ты не будешь меня обижать?</p>
-      <button class="btn" data-extra="yes" style="background:#009688; color:#fff;">Да</button>
-      <button class="btn" data-extra="no" style="background:#009688; color:#fff;">Нет</button>
-      
-      <p>Ты будешь моим другом?</p>
-      <button class="btn" data-extra="yes" style="background:#009688; color:#fff;">Да</button>
-      <button class="btn" data-extra="no" style="background:#009688; color:#fff;">Нет</button>
-      
-      <p>Ты будешь меня любить?</p>
-      <button class="btn" data-extra="yes" style="background:#009688; color:#fff;">Да</button>
-      <button class="btn" data-extra="no" style="background:#009688; color:#fff;">Нет</button>
-      
-      <p>Точно точно будешь?</p>
-      <button class="btn" id="final-extra-btn" style="background:#009688; color:#fff;">Ответить</button>
-    </div>
-    <div id="final-message" class="hidden">
-      <h2>Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️</h2>
-    </div>
-  </section>
-  
-  <!-- Скрипты -->
   <script>
-    // Начало опроса
-    const startBtn = document.getElementById('start-btn');
-    const introSection = document.getElementById('intro-section');
-    const quizSection = document.getElementById('quiz-section');
-    const questionText = document.getElementById('question-text');
-    const answersDiv = document.getElementById('answers');
-    
-    // Массив из 10 вопросов для 30-летних
-    const questions = [
-      "Чувствуешь, что настало время больших перемен?",
-      "Ты готов(а) к новым достижениям и опыту?",
-      "Хочешь оставить позади юношеские страхи?",
-      "Веришь, что 30 – это только начало?",
-      "Ты уже определил(а) свои жизненные цели?",
-      "Готов(а) к новым профессиональным вызовам?",
-      "Считаешь, что опыт – лучший учитель?",
-      "Ты планируешь больше путешествовать?",
-      "Готов(а) ценить моменты с близкими?",
-      "Ты веришь в силу зрелой любви?"
-    ];
-    
-    let currentQuestion = 0;
-    
-    // Функция показа вопросов с задержкой 1 секунда
-    function showQuestionWithDelay() {
-      answersDiv.innerHTML = ""; // очищаем ответы
-      questionText.textContent = "";
-      setTimeout(() => {
-        questionText.textContent = `Вопрос ${currentQuestion + 1}: ${questions[currentQuestion]}`;
-        
-        // Добавляем два варианта ответа
-        const yesBtn = document.createElement('button');
-        yesBtn.textContent = "Да";
-        yesBtn.className = "btn answer-btn";
-        yesBtn.dataset.answer = "yes";
-        
-        const noBtn = document.createElement('button');
-        noBtn.textContent = "Нет";
-        noBtn.className = "btn answer-btn";
-        noBtn.dataset.answer = "no";
-        
-        answersDiv.appendChild(yesBtn);
-        answersDiv.appendChild(noBtn);
-        
-        // Добавляем обработчики кликов для интерактивности кнопок
-        [yesBtn, noBtn].forEach(btn => {
-          btn.addEventListener('click', () => {
-            // Подсвечиваем выбранную кнопку
-            btn.classList.add('active');
-            // Скрываем другой вариант
-            [yesBtn, noBtn].forEach(other => {
-              if(other !== btn){
-                other.style.display = "none";
-              }
-            });
-            // Переход к следующему вопросу через 1.8 сек
-            setTimeout(() => {
-              currentQuestion++;
-              if(currentQuestion < questions.length) {
-                showQuestionWithDelay();
-              } else {
-                quizSection.classList.add('hidden');
-                document.getElementById('result-section').classList.remove('hidden');
-              }
-            }, 1800);
-          });
-        });
-      }, 1000); // задержка 1 секунда
-    }
-    
-    startBtn.addEventListener('click', () => {
-      // Переход от стартового экрана к блоку вопросов
-      introSection.classList.add('hidden');
-      quizSection.classList.remove('hidden');
-      showQuestionWithDelay();
-    });
-    
-    // Логика подарков
-    const secretGiftBtn = document.getElementById('secret-gift');
-    const secretResult = document.getElementById('secret-result');
-    secretGiftBtn.addEventListener('click', () => {
-      secretResult.classList.remove('hidden');
-    });
-    
-    document.getElementById('keep-gift').addEventListener('click', () => {
-      alert('Подарок сохранён! Наслаждайся купоном.');
-    });
-    
-    document.getElementById('replace-gift').addEventListener('click', () => {
-      // Переход к блоку дополнительных условий
-      document.getElementById('result-section').classList.add('hidden');
+    // Пример перехода к блоку условий (например, при выборе замены подарка)
+    // Здесь для демонстрации сразу показываем блок условий по клику на кнопку "Начать опрос"
+    document.getElementById('start-btn').addEventListener('click', () => {
+      // Убираем остальные экраны (если есть) и меняем фон на бирюзовый
+      document.getElementById('intro-section').classList.add('hidden');
+      document.body.classList.add('turquoise-bg');
+      // Показываем блок условий
       document.getElementById('extra-section').classList.remove('hidden');
+      generateFloatingQuestions();
     });
     
-    // Логика дополнительных условий
+    // Обработчик для финальной кнопки (можно добавить логику ответов)
     document.getElementById('final-extra-btn').addEventListener('click', () => {
-      document.getElementById('extra-questions').classList.add('hidden');
-      document.getElementById('final-message').classList.remove('hidden');
+      alert('Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️');
     });
+    
+    // Функция для генерации плавающих вопросов на заднем фоне
+    function generateFloatingQuestions() {
+      const bg = document.getElementById('animated-bg');
+      const texts = [
+        "Что если?", "Почему?", "Как быть?", "А вдруг...", "Ты уверен?", 
+        "Интересно?", "Невероятно!", "Вопрос?", "Подумаем...", "Время перемен"
+      ];
+      // Очищаем фон перед генерацией
+      bg.innerHTML = "";
+      const count = 15; // число плавающих элементов
+      for (let i = 0; i < count; i++) {
+        const span = document.createElement('span');
+        span.classList.add('floating-question');
+        span.textContent = texts[Math.floor(Math.random() * texts.length)];
+        // Задаём случайный размер, позицию и задержку анимации
+        const size = Math.random() * 1.5 + 0.8; // размер от 0.8em до 2.3em
+        span.style.fontSize = size + "em";
+        span.style.left = Math.random() * 100 + "%";
+        span.style.top = Math.random() * 100 + "%";
+        span.style.animationDelay = Math.random() * 5 + "s";
+        bg.appendChild(span);
+      }
+    }
   </script>
 </body>
 </html>
