@@ -3,8 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Опросник к 30-летию</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>30-летний опросник</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      transition: background-color 0.5s ease;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #quiz-container {
+      margin-top: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #question-box {
+      font-size: 24px;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .answer-btns {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .answer-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .answer-btn:hover {
+      background: #45a049;
+    }
+
+    #result-container {
+      margin-top: 20px;
+      display: none;
+    }
+
+    #secret-gift {
+      border: 2px solid gold;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        box-shadow: 0 0 10px gold;
+      }
+      to {
+        box-shadow: 0 0 20px gold, 0 0 30px gold;
+      }
+    }
+
+    .gift {
+      padding: 10px 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .gift:hover {
+      transform: scale(1.05);
+    }
+
+    #story-container {
+      background-color: turquoise;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .story-btn {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    .floating-question {
+      position: absolute;
+      animation: float 5s infinite ease-in-out;
+      opacity: 0.7;
+      transition: all 0.5s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(-20px); }
+      50% { transform: translateY(20px); }
+      100% { transform: translateY(-20px); }
+    }
+
+    .turquoise-bg {
+      background-color: turquoise !important;
+    }
+  </style>
 </head>
 <body>
   <div class="background"></div>
@@ -12,29 +142,128 @@
     <h1>🎉 Праздничный опросник к 30-летию 🎉</h1>
     <div id="quiz-container">
       <div id="question-box"></div>
-      <button id="next-btn">Следующий вопрос</button>
+      <div class="answer-btns">
+        <button class="answer-btn" onclick="answer('да')">Да</button>
+        <button class="answer-btn" onclick="answer('нет')">Нет</button>
+      </div>
     </div>
-    <div id="result-container" class="hidden">
+    <div id="result-container">
       <h2>🎉 Результаты 🎉</h2>
-      <p id="result-text"></p>
       <div id="gifts">
         <div class="gift">Подарок 1: Сертификат в спа-салон</div>
         <div class="gift">Подарок 2: Набор косметики</div>
         <div id="secret-gift" class="gift">🎁 СЕКРЕТНЫЙ ПОДАРОК 🎁</div>
       </div>
     </div>
-    <div id="secret-container" class="hidden">
+    <div id="secret-container" style="display: none;">
       <h2>🎁 Вы выиграли купон на скидку 15% в магазин Дикси!</h2>
-      <button id="keep-gift">Оставить подарок</button>
-      <button id="change-gift">Заменить на что-то необыкновенное</button>
+      <button onclick="keepGift()">Оставить подарок</button>
+      <button onclick="changeGift()">Заменить на нечто необыкновенное</button>
     </div>
-    <div id="story-container" class="hidden">
-      <h2>Бирюзовая история</h2>
+    <div id="story-container" style="display: none;">
       <p>Ты не будешь меня обижать?</p>
-      <button class="story-btn" data-answer="yes">Да</button>
-      <button class="story-btn" data-answer="no">Нет</button>
+      <button class="story-btn" onclick="storyAnswer('yes')">Да</button>
+      <button class="story-btn" onclick="storyAnswer('no')">Нет</button>
     </div>
   </div>
-  <script src="script.js"></script>
+
+  <script>
+    const questions = [
+      "Ты готов к новым приключениям?",
+      "Любишь ли ты путешествовать?",
+      "Часто ли ты ходишь в рестораны?",
+      "Мечтаешь ли ты о собственном бизнесе?",
+      "Считаешь ли себя оптимистом?",
+      "Любишь ли ты сюрпризы?",
+      "Был ли у тебя когда-нибудь питомец?",
+      "Планируешь ли ты большой проект в этом году?",
+      "Важно ли тебе оставаться молодым духом?",
+      "Готов ли ты к неожиданностям?"
+    ];
+
+    let currentQuestion = 0;
+    let answers = [];
+
+    const questionBox = document.getElementById('question-box');
+    const quizContainer = document.getElementById('quiz-container');
+    const resultContainer = document.getElementById('result-container');
+    const secretContainer = document.getElementById('secret-container');
+    const storyContainer = document.getElementById('story-container');
+
+    function answer(response) {
+      answers.push(response);
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        questionBox.textContent = questions[currentQuestion];
+      } else {
+        quizContainer.style.display = 'none';
+        resultContainer.style.display = 'block';
+        document.getElementById('secret-gift').addEventListener('click', () => {
+          resultContainer.style.display = 'none';
+          secretContainer.style.display = 'block';
+        });
+      }
+    }
+
+    function keepGift() {
+      secretContainer.style.display = 'none';
+      alert('Вы сохранили свой подарок!');
+    }
+
+    function changeGift() {
+      document.body.classList.add('turquoise-bg');
+      secretContainer.style.display = 'none';
+      storyContainer.style.display = 'block';
+    }
+
+    function storyAnswer(answer) {
+      const storyQuestions = [
+        "Ты будешь моим другом?",
+        "Ты будешь меня любить?",
+        "Точно точно будешь?"
+      ];
+      let currentStoryQuestion = 0;
+
+      function askStoryQuestion() {
+        if (currentStoryQuestion < storyQuestions.length) {
+          storyContainer.innerHTML = `
+            <p>${storyQuestions[currentStoryQuestion]}</p>
+            <button class="story-btn" onclick="storyAnswer('да')">Да</button>
+            <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
+          `;
+          currentStoryQuestion++;
+        } else {
+          storyContainer.innerHTML = `
+            <h2>Хорошо, я верю тебе!</h2>
+            <p>Забери меня к себе ❤️</p>
+          `;
+          setTimeout(() => {
+            storyContainer.style.display = 'none';
+          }, 3000);
+        }
+      }
+
+      askStoryQuestion();
+    }
+
+    // Фоновые вопросы
+    function createFloatingQuestion() {
+      const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+      const question = document.createElement('div');
+      question.className = 'floating-question';
+      question.textContent = randomQuestion;
+      question.style.left = Math.random() * 100 + '%';
+      question.style.top = Math.random() * 100 + '%';
+      question.style.fontSize = Math.random() * 15 + 12 + 'px';
+      question.style.transform = `rotate(${Math.random() * 360}deg)`;
+      question.style.color = `hsl(${Math.random() * 360}, 70%, 50%)`;
+      document.querySelector('.background').appendChild(question);
+      setTimeout(() => {
+        question.remove();
+      }, 5000);
+    }
+
+    setInterval(createFloatingQuestion, 1000);
+  </script>
 </body>
 </html>
