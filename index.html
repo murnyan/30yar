@@ -5,7 +5,6 @@
   <title>Праздничный опрос 30-летних</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Общие стили */
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -32,9 +31,7 @@
       position: relative;
       z-index: 2;
     }
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
     .btn {
       display: inline-block;
       padding: 12px 25px;
@@ -44,50 +41,12 @@
       border-radius: 5px;
       cursor: pointer;
       transition: transform 0.3s;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-    }
-    .btn.active {
-      background: #4caf50 !important;
-      color: #fff;
-    }
-    .answer-btn {
       background: #2196f3;
       color: #fff;
     }
-    .answer-btn:hover {
-      opacity: 0.8;
-    }
-    /* Стили для экрана с условиями */
-    #extra-section {
-      position: relative;
-      overflow: hidden;
-      padding-top: 60px;
-      padding-bottom: 60px;
-    }
-    /* Бирюзовый фон для экрана с условиями */
-    .turquoise-bg {
-      background: #e0f7fa !important;
-      color: #006064;
-    }
-    /* Центрирование контента условий */
-    #conditions-container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    #conditions-container p {
-      font-size: 1.2em;
-      margin: 20px 0 10px;
-    }
-    /* Анимированный задний фон с плавающими вопросами */
+    .btn:hover { transform: scale(1.05); }
+    .btn.active { background: #4caf50 !important; color: #fff; }
+    .turquoise-bg { background: #e0f7fa !important; color: #006064; }
     #animated-bg {
       position: fixed;
       top: 0;
@@ -104,98 +63,97 @@
       opacity: 0.3;
       color: #006064;
       white-space: nowrap;
-      animation: floatUp 8s linear infinite;
-    }
-    @keyframes floatUp {
-      0% { transform: translateY(100vh); opacity: 0; }
-      20% { opacity: 0.3; }
-      80% { opacity: 0.3; }
-      100% { transform: translateY(-10vh); opacity: 0; }
     }
   </style>
 </head>
 <body id="body">
   <header>Праздничный опрос 30-летних!</header>
-  
-  <!-- Стартовый экран (пример предыдущей логики) -->
-  <section id="intro-section">
-    <p>Добро пожаловать! Ты готов(а) отметить свои 30? Пройди интерактивный опрос и получи особенный подарок!</p>
-    <button id="start-btn" class="btn" style="background:#ff5722; color:#fff;">Начать опрос</button>
+  <section id="quiz-section">
+    <h2>Готов ли ты стать 30-летним?</h2>
+    <div id="quiz-container"></div>
   </section>
-  
-  <!-- Остальные блоки опроса (в данном примере не показаны) -->
-  <!-- ... блоки опроса и подарков ... -->
-  
-  <!-- Блок дополнительных условий -->
   <section id="extra-section" class="hidden">
-    <!-- Анимированный фон с плавающими вопросами -->
     <div id="animated-bg"></div>
-    
-    <!-- Контейнер с условиями -->
     <div id="conditions-container">
       <h2>Прими условия:</h2>
       <div class="condition-block">
         <p>Ты не будешь меня обижать?</p>
-        <button class="btn answer-btn" data-extra="obizh">Да</button>
-        <button class="btn answer-btn" data-extra="obizh">Нет</button>
+        <button class="btn answer-btn">Да</button>
+        <button class="btn answer-btn">Нет</button>
       </div>
       <div class="condition-block">
         <p>Ты будешь моим другом?</p>
-        <button class="btn answer-btn" data-extra="friend">Да</button>
-        <button class="btn answer-btn" data-extra="friend">Нет</button>
+        <button class="btn answer-btn">Да</button>
+        <button class="btn answer-btn">Нет</button>
       </div>
       <div class="condition-block">
         <p>Ты будешь меня любить?</p>
-        <button class="btn answer-btn" data-extra="love">Да</button>
-        <button class="btn answer-btn" data-extra="love">Нет</button>
+        <button class="btn answer-btn">Да</button>
+        <button class="btn answer-btn">Нет</button>
       </div>
       <div class="condition-block">
         <p>Точно точно будешь?</p>
-        <button id="final-extra-btn" class="btn" style="background:#009688; color:#fff;">Ответить</button>
+        <button id="final-extra-btn" class="btn">Ответить</button>
       </div>
     </div>
   </section>
-  
   <script>
-    // Пример перехода к блоку условий (например, при выборе замены подарка)
-    // Здесь для демонстрации сразу показываем блок условий по клику на кнопку "Начать опрос"
-    document.getElementById('start-btn').addEventListener('click', () => {
-      // Убираем остальные экраны (если есть) и меняем фон на бирюзовый
-      document.getElementById('intro-section').classList.add('hidden');
-      document.body.classList.add('turquoise-bg');
-      // Показываем блок условий
-      document.getElementById('extra-section').classList.remove('hidden');
-      generateFloatingQuestions();
+    const quizQuestions = [
+      "Готов(а) ли ты к 30-летию?",
+      "Чувствуешь ли ты себя взрослым(ой)?",
+      "Любишь ли ты праздники?",
+      "Часто ли ты вспоминаешь детство?",
+      "Стало ли тебе сложнее ложиться поздно?",
+      "Ты научился(ась) копить деньги?",
+      "Ты умеешь готовить любимые блюда?",
+      "Ты стал(а) мудрее за последние 10 лет?",
+      "Остались ли у тебя мечты?",
+      "Ты доволен(а) своей жизнью?"
+    ];
+    
+    const quizContainer = document.getElementById("quiz-container");
+    quizQuestions.forEach((question, index) => {
+      const questionBlock = document.createElement("div");
+      questionBlock.innerHTML = `<p>${question}</p>
+        <button class="btn" onclick="nextQuestion(${index})">Да</button>
+        <button class="btn" onclick="nextQuestion(${index})">Нет</button>`;
+      quizContainer.appendChild(questionBlock);
     });
     
-    // Обработчик для финальной кнопки (можно добавить логику ответов)
-    document.getElementById('final-extra-btn').addEventListener('click', () => {
-      alert('Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️');
-    });
+    function nextQuestion(index) {
+      const allQuestions = document.querySelectorAll("#quiz-container div");
+      allQuestions[index].style.display = "none";
+      if (index + 1 < allQuestions.length) {
+        allQuestions[index + 1].style.display = "block";
+      } else {
+        document.getElementById("quiz-section").classList.add("hidden");
+        document.getElementById("extra-section").classList.remove("hidden");
+        document.body.classList.add("turquoise-bg");
+        generateFloatingQuestions();
+      }
+    }
     
-    // Функция для генерации плавающих вопросов на заднем фоне
     function generateFloatingQuestions() {
       const bg = document.getElementById('animated-bg');
       const texts = [
         "Что если?", "Почему?", "Как быть?", "А вдруг...", "Ты уверен?", 
         "Интересно?", "Невероятно!", "Вопрос?", "Подумаем...", "Время перемен"
       ];
-      // Очищаем фон перед генерацией
       bg.innerHTML = "";
-      const count = 15; // число плавающих элементов
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < 30; i++) {
         const span = document.createElement('span');
         span.classList.add('floating-question');
         span.textContent = texts[Math.floor(Math.random() * texts.length)];
-        // Задаём случайный размер, позицию и задержку анимации
-        const size = Math.random() * 1.5 + 0.8; // размер от 0.8em до 2.3em
-        span.style.fontSize = size + "em";
+        span.style.fontSize = (Math.random() * 1.5 + 0.8) + "em";
         span.style.left = Math.random() * 100 + "%";
         span.style.top = Math.random() * 100 + "%";
-        span.style.animationDelay = Math.random() * 5 + "s";
         bg.appendChild(span);
       }
     }
+    
+    document.getElementById('final-extra-btn').addEventListener('click', () => {
+      alert('Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️');
+    });
   </script>
 </body>
 </html>
