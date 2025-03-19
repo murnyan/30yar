@@ -2,24 +2,36 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Опросник для 30-летних</title>
+  <title>Праздничный опрос 30-летних</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Основные стили -->
+  <!-- Стили -->
   <style>
+    /* Общие стили */
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f0f0;
-      color: #333;
-      transition: background 0.5s, color 0.5s;
+      background: #fff;
+      overflow-x: hidden;
     }
     header {
-      background: #ff6f61;
+      background: linear-gradient(45deg, #ff9800, #ff5722);
       color: #fff;
       padding: 20px;
       text-align: center;
-      font-size: 2em;
-      animation: fadeInDown 1s;
+      font-size: 2.5em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://i.ibb.co/7N7mWjS/fireworks.png') center/cover no-repeat;
+      opacity: 0.1;
+      pointer-events: none;
     }
     section {
       max-width: 800px;
@@ -28,121 +40,149 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      animation: fadeIn 1s;
+      text-align: center;
     }
     .hidden {
       display: none;
     }
     .btn {
       display: inline-block;
-      padding: 10px 20px;
+      padding: 12px 25px;
       margin: 10px 5px;
-      font-size: 1em;
+      font-size: 1.1em;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: transform 0.3s, background 0.3s;
+      transition: background 0.3s, opacity 0.3s;
     }
-    .btn:hover {
-      transform: scale(1.05);
-    }
-    /* Кнопка старта опроса */
-    #start-btn {
-      background: #ff6f61;
+    /* Стиль для интерактивных кнопок */
+    .btn.active {
+      background: #4caf50 !important;
       color: #fff;
     }
-    /* Кнопки ответа */
-    .answer-btn {
-      background: #4caf50;
+    .btn.answer-btn {
+      background: #2196f3;
       color: #fff;
     }
-    /* Секретный подарок в "горящей рамочке" */
-    .secret-gift {
-      border: 3px solid #e91e63;
-      box-shadow: 0 0 15px #e91e63;
-      padding: 10px;
-      margin: 10px 0;
-      animation: pulse 2s infinite;
+    .btn.answer-btn:hover {
+      opacity: 0.8;
     }
-    /* Анимации */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Праздничный стартовый экран */
+    #intro-section {
+      background: linear-gradient(135deg, #ffecb3, #ffe082);
+      border: 3px dashed #ff9800;
+      padding: 40px;
+      border-radius: 15px;
+      animation: blink 1.5s infinite;
     }
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
     }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px #e91e63; }
-      50% { box-shadow: 0 0 25px #e91e63; }
-      100% { box-shadow: 0 0 10px #e91e63; }
-    }
-    /* Бирюзовый стиль для необыкновенной замены */
+    /* Бирюзовый фон для вопросов (включается позже) */
     .turquoise-theme {
       background: #e0f7fa;
       color: #006064;
     }
-    .turquoise-theme header {
-      background: #00acc1;
+    /* Анимация плавного появления вопросов */
+    .fade-in {
+      animation: fadeIn 1s ease-in forwards;
     }
-    .turquoise-theme .btn {
-      background: #00acc1;
-      color: #fff;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Анимация солнца, появляющегося из-за туч */
+    .sun-container {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      margin: 20px 0;
+    }
+    .clouds {
+      background: url('https://i.ibb.co/mJZVqHL/clouds.png') center/contain no-repeat;
+      width: 100%;
+      height: 100%;
+    }
+    .sun {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #ffeb3b, #fbc02d);
+      border-radius: 50%;
+      opacity: 0;
+    }
+    .sun.animate {
+      animation: riseSun 1.5s forwards;
+    }
+    @keyframes riseSun {
+      0% { opacity: 0; bottom: -50px; }
+      50% { opacity: 1; bottom: 30px; }
+      100% { opacity: 1; bottom: 50px; }
     }
   </style>
 </head>
 <body id="body">
-  <header id="header">Опросник 30-летних</header>
+  <header>Праздничный опрос 30-летних!</header>
+  
+  <!-- Стартовый экран -->
   <section id="intro-section">
-    <p>Ты готов(а) стать 30-летним? Пройди опрос из 20 вопросов и узнай, что тебя ждет!</p>
-    <button id="start-btn" class="btn">Начать опрос</button>
+    <p>Добро пожаловать! Ты готов(а) отметить свои 30? Пройди интерактивный опрос и получи особенный подарок!</p>
+    <button id="start-btn" class="btn" style="background:#ff5722; color:#fff;">Начать опрос</button>
   </section>
   
-  <!-- Опросник -->
-  <section id="quiz-section" class="hidden">
-    <div id="question-container">
-      <p id="question-text"></p>
-      <div id="answers">
-        <button class="btn answer-btn" data-answer="yes">Да</button>
-        <button class="btn answer-btn" data-answer="no">Нет</button>
+  <!-- Блок вопросов (бирюзовый фон с задержкой появления) -->
+  <section id="quiz-section" class="hidden turquoise-theme">
+    <div id="question-container" class="fade-in">
+      <p id="question-text" style="font-size:1.3em;"></p>
+      <div id="answers"></div>
+      <!-- Контейнер для анимации солнца -->
+      <div class="sun-container">
+        <div class="clouds"></div>
+        <div id="sun" class="sun"></div>
       </div>
     </div>
   </section>
   
-  <!-- Результаты опроса и выбор подарков -->
+  <!-- Блок результатов и подарков -->
   <section id="result-section" class="hidden">
     <h2>Поздравляем, ты успешно прошёл опрос!</h2>
     <p>Выбери свой подарок:</p>
     <div id="gifts">
-      <button class="btn" id="gift1">Подарок 1</button>
-      <button class="btn" id="gift2">Подарок 2</button>
-      <button class="btn secret-gift" id="secret-gift">СЕКРЕТНЫЙ подарок</button>
+      <button class="btn" id="gift1" style="background:#4caf50; color:#fff;">Подарок 1</button>
+      <button class="btn" id="gift2" style="background:#2196f3; color:#fff;">Подарок 2</button>
+      <button class="btn" id="secret-gift" style="background:#e91e63; color:#fff; border: 3px solid #e91e63; box-shadow: 0 0 15px #e91e63;">СЕКРЕТНЫЙ подарок</button>
     </div>
     <div id="secret-result" class="hidden">
       <p>Вы выиграли купон на скидку в магазин Дикси на 15%!</p>
       <div>
-        <button class="btn" id="keep-gift">Оставить подарок</button>
-        <button class="btn" id="replace-gift">Заменить на нечто необыкновенное</button>
+        <button class="btn" id="keep-gift" style="background:#4caf50; color:#fff;">Оставить подарок</button>
+        <button class="btn" id="replace-gift" style="background:#2196f3; color:#fff;">Заменить на нечто необыкновенное</button>
       </div>
     </div>
   </section>
   
-  <!-- Блок с условиями для необыкновенного подарка -->
+  <!-- Дополнительный блок с условиями -->
   <section id="extra-section" class="hidden">
     <h2>Прими условия:</h2>
     <div id="extra-questions">
       <p>Ты не будешь меня обижать?</p>
-      <button class="btn" data-extra="yes">Да</button>
-      <button class="btn" data-extra="no">Нет</button>
+      <button class="btn" data-extra="yes" style="background:#009688; color:#fff;">Да</button>
+      <button class="btn" data-extra="no" style="background:#009688; color:#fff;">Нет</button>
+      
       <p>Ты будешь моим другом?</p>
-      <button class="btn" data-extra="yes">Да</button>
-      <button class="btn" data-extra="no">Нет</button>
+      <button class="btn" data-extra="yes" style="background:#009688; color:#fff;">Да</button>
+      <button class="btn" data-extra="no" style="background:#009688; color:#fff;">Нет</button>
+      
       <p>Ты будешь меня любить?</p>
-      <button class="btn" data-extra="yes">Да</button>
-      <button class="btn" data-extra="no">Нет</button>
+      <button class="btn" data-extra="yes" style="background:#009688; color:#fff;">Да</button>
+      <button class="btn" data-extra="no" style="background:#009688; color:#fff;">Нет</button>
+      
       <p>Точно точно будешь?</p>
-      <button class="btn" id="final-extra-btn">Ответить</button>
+      <button class="btn" id="final-extra-btn" style="background:#009688; color:#fff;">Ответить</button>
     </div>
     <div id="final-message" class="hidden">
       <h2>Хорошо, я верю тебе, забери меня к себе, я у Максима в сумке ❤️</h2>
@@ -151,39 +191,89 @@
   
   <!-- Скрипты -->
   <script>
-    // Логика опросника
+    // Начало опроса
     const startBtn = document.getElementById('start-btn');
     const introSection = document.getElementById('intro-section');
     const quizSection = document.getElementById('quiz-section');
     const questionText = document.getElementById('question-text');
-    const answerButtons = document.querySelectorAll('.answer-btn');
+    const answersDiv = document.getElementById('answers');
+    const sunEl = document.getElementById('sun');
     
-    // 20 вопросов. Здесь можно варьировать вопросы.
-    const questions = Array(20).fill('Готов ли ты стать 30-летним?');
+    // Массив из 10 вопросов для 30-летних
+    const questions = [
+      "Чувствуешь, что настало время больших перемен?",
+      "Ты готов(а) к новым достижениям и опыту?",
+      "Хочешь оставить позади юношеские страхи?",
+      "Веришь, что 30 – это только начало?",
+      "Ты уже определил(а) свои жизненные цели?",
+      "Готов(а) к новым профессиональным вызовам?",
+      "Считаешь, что опыт – лучший учитель?",
+      "Ты планируешь больше путешествовать?",
+      "Готов(а) ценить моменты с близкими?",
+      "Ты веришь в силу зрелой любви?"
+    ];
+    
     let currentQuestion = 0;
     
-    startBtn.addEventListener('click', () => {
-      introSection.classList.add('hidden');
-      quizSection.classList.remove('hidden');
-      showQuestion();
-    });
-    
-    function showQuestion() {
-      if (currentQuestion < questions.length) {
+    // Функция задержанного показа вопросов (5 секунд)
+    function showQuestionWithDelay() {
+      answersDiv.innerHTML = ""; // очищаем ответы
+      questionText.textContent = "";
+      sunEl.classList.remove('animate'); // сбрасываем анимацию солнца
+      setTimeout(() => {
         questionText.textContent = `Вопрос ${currentQuestion + 1}: ${questions[currentQuestion]}`;
-      } else {
-        // Завершили опрос, показать результаты
-        quizSection.classList.add('hidden');
-        document.getElementById('result-section').classList.remove('hidden');
-      }
+        // Добавляем два варианта ответа
+        const yesBtn = document.createElement('button');
+        yesBtn.textContent = "Да";
+        yesBtn.className = "btn answer-btn";
+        yesBtn.dataset.answer = "yes";
+        
+        const noBtn = document.createElement('button');
+        noBtn.textContent = "Нет";
+        noBtn.className = "btn answer-btn";
+        noBtn.dataset.answer = "no";
+        
+        answersDiv.appendChild(yesBtn);
+        answersDiv.appendChild(noBtn);
+        
+        // Применяем эффект fade-in к вопросу и кнопкам
+        document.getElementById("question-container").classList.add("fade-in");
+        
+        // Добавляем обработчики кликов для интерактивности кнопок
+        [yesBtn, noBtn].forEach(btn => {
+          btn.addEventListener('click', () => {
+            // Подсвечиваем выбранную кнопку
+            btn.classList.add('active');
+            // Скрываем другой вариант
+            [yesBtn, noBtn].forEach(other => {
+              if(other !== btn){
+                other.style.opacity = "0";
+                other.disabled = true;
+              }
+            });
+            // Запускаем анимацию солнца
+            sunEl.classList.add('animate');
+            // Переход к следующему вопросу после небольшой задержки (1.8с, чтобы анимация завершилась)
+            setTimeout(() => {
+              currentQuestion++;
+              if(currentQuestion < questions.length) {
+                showQuestionWithDelay();
+              } else {
+                // Завершаем опрос и переходим к блоку с подарками
+                quizSection.classList.add('hidden');
+                document.getElementById('result-section').classList.remove('hidden');
+              }
+            }, 1800);
+          });
+        });
+      }, 5000); // задержка 5 секунд перед показом вопроса
     }
     
-    answerButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Можно добавить обработку ответа, если нужно
-        currentQuestion++;
-        showQuestion();
-      });
+    startBtn.addEventListener('click', () => {
+      // Переход от стартового экрана к блоку вопросов с бирюзовым фоном
+      introSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      showQuestionWithDelay();
     });
     
     // Логика подарков
@@ -193,22 +283,20 @@
       secretResult.classList.remove('hidden');
     });
     
-    // Кнопки выбора подарка
     document.getElementById('keep-gift').addEventListener('click', () => {
-      alert('Подарок сохранён! Наслаждайся своим купоном.');
+      alert('Подарок сохранён! Наслаждайся купоном.');
     });
     
     document.getElementById('replace-gift').addEventListener('click', () => {
-      // Меняем стиль сайта на бирюзовый
+      // Меняем стиль сайта (дополнительное оформление можно добавить)
       document.getElementById('body').classList.add('turquoise-theme');
-      // Переходим к блоку с дополнительными условиями
+      // Переход к блоку дополнительных условий
       document.getElementById('result-section').classList.add('hidden');
       document.getElementById('extra-section').classList.remove('hidden');
     });
     
-    // Логика дополнительного блока (условия)
+    // Логика дополнительных условий
     document.getElementById('final-extra-btn').addEventListener('click', () => {
-      // Независимо от ответов, показываем финальное сообщение
       document.getElementById('extra-questions').classList.add('hidden');
       document.getElementById('final-message').classList.remove('hidden');
     });
