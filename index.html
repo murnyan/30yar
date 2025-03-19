@@ -181,6 +181,25 @@
     @keyframes appear {
       to { opacity: 1; transform: translateY(0); }
     }
+
+    .typing-effect {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid #333;
+      width: 0;
+      animation: typing 3s steps(40, end),
+                 blink-caret .75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #333 }
+    }
   </style>
 </head>
 <body>
@@ -285,25 +304,52 @@
     }
 
     const storyQuestions = [
-      "Ты не будешь меня обижать?",
+      "Привет...",
       "Ты будешь моим другом?",
       "Ты будешь меня любить?",
-      "Точно точно будешь?"
+      "Точно точно будешь?",
+      "Не боишься ли ты меня?",
+      "Ты готов помочь мне?"
     ];
 
     function showStoryQuestion() {
       if (storyStep < storyQuestions.length) {
-        document.getElementById('story-questions').innerHTML = `
-          <p>${storyQuestions[storyStep]}</p>
-          <button class="story-btn" onclick="storyAnswer('да')">Да</button>
-          <button class="story-btn" onclick="storyAnswer('нет')">Нет</button>
-        `;
-        storyStep++;
+        const question = storyQuestions[storyStep];
+        document.getElementById('story-questions').innerHTML = `<div class="typing-effect" id="typing-${storyStep}"></div>`;
+        typeWriter(question, `typing-${storyStep}`, () => {
+          if (storyStep === 0) {
+            setTimeout(() => {
+              storyStep++;
+              showStoryQuestion();
+            }, 2000); // Задержка перед следующим вопросом
+          } else {
+            storyStep++;
+            showStoryQuestion();
+          }
+        });
       } else {
         document.getElementById('story-questions').innerHTML = '';
         document.getElementById('final-message').innerHTML = '';
         createFinalMessage();
       }
+    }
+
+    function typeWriter(text, elementId, callback) {
+      let i = 0;
+      const elem = document.getElementById(elementId);
+      const speed = 50; // Скорость печати
+
+      function type() {
+        if (i < text.length) {
+          elem.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          callback();
+        }
+      }
+
+      type();
     }
 
     function storyAnswer(answer) {
@@ -347,6 +393,9 @@
 
     // Увеличенное количество вопросов
     setInterval(createFloatingQuestion, 500); // Теперь каждые 0.5 сек
+
+    // Инициализация первого вопроса
+    questionBox.textContent = questions[currentQuestion];
   </script>
 </body>
 </html>
