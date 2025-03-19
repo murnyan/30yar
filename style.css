@@ -25,12 +25,14 @@ h1 {
     color: #ff69b4;
     text-align: center;
     margin-bottom: 10px;
+    animation: bounceIn 1s ease;
 }
 
 .subtitle {
     text-align: center;
     color: #666;
     margin-bottom: 20px;
+    animation: fadeIn 1.5s ease;
 }
 
 .question {
@@ -38,11 +40,15 @@ h1 {
     padding: 15px;
     background-color: #fff0f5;
     border-radius: 10px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.5s ease;
+    opacity: 0;
+    transform: translateY(20px);
 }
 
-.question:hover {
-    transform: translateY(-5px);
+.question.active {
+    opacity: 1;
+    transform: translateY(0);
+    animation: slideUp 0.5s ease;
 }
 
 .question p {
@@ -55,6 +61,11 @@ h1 {
     display: block;
     margin: 5px 0;
     cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.question label:hover {
+    color: #ff1493;
 }
 
 button {
@@ -64,17 +75,23 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
     background-color: #ff1493;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-#submit-btn {
+button:active {
+    transform: scale(0.95);
+}
+
+#next-btn {
     display: block;
     margin: 20px auto;
+    animation: pulse 1.5s infinite;
 }
 
 .hidden {
@@ -84,6 +101,7 @@ button:hover {
 #result {
     text-align: center;
     padding: 20px;
+    animation: fadeIn 1s ease;
 }
 
 .gifts {
@@ -99,22 +117,17 @@ button:hover {
     color: #fff;
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .gift:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
+    background-color: #ff1493;
 }
 
 .secret-gift {
     border: 3px solid #ff4500;
     animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
 }
 
 .modal {
@@ -130,18 +143,27 @@ button:hover {
     animation: slideIn 0.5s ease;
 }
 
-.modal h2 {
-    color: #ff69b4;
-    margin-bottom: 20px;
-}
-
-.modal button {
-    margin: 10px;
-}
-
+/* Анимации */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 @keyframes slideIn {
