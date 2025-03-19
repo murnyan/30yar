@@ -10,7 +10,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fff;
+      background: #fdfdfd;
       overflow-x: hidden;
     }
     header {
@@ -20,23 +20,11 @@
       text-align: center;
       font-size: 2.5em;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      position: relative;
-    }
-    header::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('https://i.ibb.co/7N7mWjS/fireworks.png') center/cover no-repeat;
-      opacity: 0.1;
-      pointer-events: none;
     }
     section {
       max-width: 800px;
       margin: 30px auto;
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -53,7 +41,10 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s, opacity 0.3s;
+      transition: transform 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
     }
     /* Стиль для интерактивных кнопок */
     .btn.active {
@@ -69,59 +60,15 @@
     }
     /* Праздничный стартовый экран */
     #intro-section {
-      background: linear-gradient(135deg, #ffecb3, #ffe082);
+      background: #fff3e0;
       border: 3px dashed #ff9800;
       padding: 40px;
       border-radius: 15px;
-      animation: blink 1.5s infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-    /* Бирюзовый фон для вопросов (включается позже) */
-    .turquoise-theme {
-      background: #e0f7fa;
-      color: #006064;
-    }
-    /* Анимация плавного появления вопросов */
-    .fade-in {
-      animation: fadeIn 1s ease-in forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* Анимация солнца, появляющегося из-за туч */
-    .sun-container {
-      position: relative;
-      width: 100%;
-      height: 150px;
-      margin: 20px 0;
-    }
-    .clouds {
-      background: url('https://i.ibb.co/mJZVqHL/clouds.png') center/contain no-repeat;
-      width: 100%;
-      height: 100%;
-    }
-    .sun {
-      position: absolute;
-      bottom: -50px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, #ffeb3b, #fbc02d);
-      border-radius: 50%;
-      opacity: 0;
-    }
-    .sun.animate {
-      animation: riseSun 1.5s forwards;
-    }
-    @keyframes riseSun {
-      0% { opacity: 0; bottom: -50px; }
-      50% { opacity: 1; bottom: 30px; }
-      100% { opacity: 1; bottom: 50px; }
+    /* Фон для вопросов (новый, без изображений) */
+    .custom-bg {
+      background: #dcedc8;
+      color: #33691e;
     }
   </style>
 </head>
@@ -134,16 +81,11 @@
     <button id="start-btn" class="btn" style="background:#ff5722; color:#fff;">Начать опрос</button>
   </section>
   
-  <!-- Блок вопросов (бирюзовый фон с задержкой появления) -->
-  <section id="quiz-section" class="hidden turquoise-theme">
-    <div id="question-container" class="fade-in">
+  <!-- Блок вопросов с новым фоном -->
+  <section id="quiz-section" class="hidden custom-bg">
+    <div id="question-container">
       <p id="question-text" style="font-size:1.3em;"></p>
       <div id="answers"></div>
-      <!-- Контейнер для анимации солнца -->
-      <div class="sun-container">
-        <div class="clouds"></div>
-        <div id="sun" class="sun"></div>
-      </div>
     </div>
   </section>
   
@@ -197,7 +139,6 @@
     const quizSection = document.getElementById('quiz-section');
     const questionText = document.getElementById('question-text');
     const answersDiv = document.getElementById('answers');
-    const sunEl = document.getElementById('sun');
     
     // Массив из 10 вопросов для 30-летних
     const questions = [
@@ -215,13 +156,13 @@
     
     let currentQuestion = 0;
     
-    // Функция задержанного показа вопросов (5 секунд)
+    // Функция показа вопросов с задержкой 1 секунда
     function showQuestionWithDelay() {
       answersDiv.innerHTML = ""; // очищаем ответы
       questionText.textContent = "";
-      sunEl.classList.remove('animate'); // сбрасываем анимацию солнца
       setTimeout(() => {
         questionText.textContent = `Вопрос ${currentQuestion + 1}: ${questions[currentQuestion]}`;
+        
         // Добавляем два варианта ответа
         const yesBtn = document.createElement('button');
         yesBtn.textContent = "Да";
@@ -236,9 +177,6 @@
         answersDiv.appendChild(yesBtn);
         answersDiv.appendChild(noBtn);
         
-        // Применяем эффект fade-in к вопросу и кнопкам
-        document.getElementById("question-container").classList.add("fade-in");
-        
         // Добавляем обработчики кликов для интерактивности кнопок
         [yesBtn, noBtn].forEach(btn => {
           btn.addEventListener('click', () => {
@@ -247,30 +185,26 @@
             // Скрываем другой вариант
             [yesBtn, noBtn].forEach(other => {
               if(other !== btn){
-                other.style.opacity = "0";
-                other.disabled = true;
+                other.style.display = "none";
               }
             });
-            // Запускаем анимацию солнца
-            sunEl.classList.add('animate');
-            // Переход к следующему вопросу после небольшой задержки (1.8с, чтобы анимация завершилась)
+            // Переход к следующему вопросу через 1.8 сек
             setTimeout(() => {
               currentQuestion++;
               if(currentQuestion < questions.length) {
                 showQuestionWithDelay();
               } else {
-                // Завершаем опрос и переходим к блоку с подарками
                 quizSection.classList.add('hidden');
                 document.getElementById('result-section').classList.remove('hidden');
               }
             }, 1800);
           });
         });
-      }, 5000); // задержка 5 секунд перед показом вопроса
+      }, 1000); // задержка 1 секунда
     }
     
     startBtn.addEventListener('click', () => {
-      // Переход от стартового экрана к блоку вопросов с бирюзовым фоном
+      // Переход от стартового экрана к блоку вопросов
       introSection.classList.add('hidden');
       quizSection.classList.remove('hidden');
       showQuestionWithDelay();
@@ -288,8 +222,6 @@
     });
     
     document.getElementById('replace-gift').addEventListener('click', () => {
-      // Меняем стиль сайта (дополнительное оформление можно добавить)
-      document.getElementById('body').classList.add('turquoise-theme');
       // Переход к блоку дополнительных условий
       document.getElementById('result-section').classList.add('hidden');
       document.getElementById('extra-section').classList.remove('hidden');
